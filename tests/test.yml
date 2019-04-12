@@ -1,0 +1,5 @@
+---
+- hosts: office
+  remote_user: root
+  roles:
+    - egeneralov.hypervisor

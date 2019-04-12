@@ -1,0 +1,12 @@
+
+<network>
+  <name>{{ net_pool.name }}</name>
+  <uuid>{{ net_pool.uuid }}</uuid>
+  <forward mode='nat'/>
+  <bridge name='{{ net_pool.uuid }}' stp='on' delay='0'/>
+  <ip address='{{ net_pool.address | ipaddr('address') }}' netmask='{{ net_pool.address | ipaddr('netmask') }}'>
+    <dhcp>
+      <range start='{{ net_pool.address | ipaddr('address') | ipmath(1) }}' end='{{ net_pool.address | ipaddr('address') | ipmath(250) }}'/>
+    </dhcp>
+  </ip>
+</network>

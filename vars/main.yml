@@ -1,0 +1,8 @@
+---
+# vars file for egeneralov.hypervisor
+
+supported:
+  distribution:
+    - Debian
+  release:
+    - stretch

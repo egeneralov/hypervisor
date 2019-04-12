@@ -1,0 +1,67 @@
+---
+# tasks file for egeneralov.hypervisor
+
+- name: "Check if role supporting your target"
+  assert:
+    that:
+      - "ansible_distribution in pkg.keys()"
+      - "ansible_distribution_release in pkg[ansible_distribution].keys()"
+    fail_msg: "{{ ansible_distribution }} {{ ansible_distribution_release }} is not supported by role"
+    success_msg: "Provision hypervisor power to {{ ansible_distribution }} {{ ansible_distribution_release }}"
+
+- name: install kvm
+  apt:
+    name: "{{ pkg[ansible_distribution][ansible_distribution_release] }}"
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: python lib's
+  pip:
+    name: "{{ pip }}"
+
+# - template:
+#     src: libvirt.conf.j2
+#     dest: /etc/sasl2/libvirt.conf
+#   register: libvirt_conf
+# 
+# - template:
+#     src: libvirtd.conf.j2
+#     dest: /etc/libvirt/libvirtd.conf
+#   register: libvirtd_conf
+# 
+# - lineinfile:
+#     regexp: '#?libvirtd_opts=.*'
+#     line: 'libvirtd_opts="-l"'
+#     path: /etc/default/libvirtd
+#   register: libvirtd_defaults
+# 
+# - name: restart libvirtd
+#   systemd:
+#     name: libvirtd.service
+#     state: restarted
+#   when: libvirt_conf is changed or libvirtd_conf is changed or libvirtd_defaults is changed
+
+- name: "ansible controller: pip install netaddr"
+  pip:
+    name: netaddr
+  delegate_to: localhost
+
+- name: "link genisoimage as mkisofs (cloud-init)"
+  file:
+    src: /usr/bin/genisoimage
+    dest: /usr/bin/mkisofs
+    state: link
+
+- name: disk pool
+  virt_pool:
+    name: "{{ disk_pool.name }}"
+    autostart: yes
+    state: active
+    xml: '{{ lookup("template", "disk_pool.xml.j2") }}'
+
+- name: network pool
+  virt_net:
+    name: "{{ net_pool.name }}"
+    autostart: yes
+    state: active
+    xml: '{{ lookup("template", "net_pool.xml.j2") }}'

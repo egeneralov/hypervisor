@@ -1,0 +1,15 @@
+galaxy_info:
+  author: Eduard Generalov
+  description: Ensure target have hypervisor power
+  license: MIT
+  min_ansible_version: 2.4
+  platforms:
+  - name: Debian
+    versions:
+    - stretch
+  galaxy_tags:
+    - kvm
+    - hypervisor
+    - qemu
+    - libvirt
+dependencies: []
